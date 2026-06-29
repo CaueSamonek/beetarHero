@@ -1,0 +1,4 @@
+# do raspberry
+adafruit-blinka
+adafruit-circuitpython-neopixel
+RPLCD

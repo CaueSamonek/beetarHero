@@ -1,0 +1,16 @@
+# sites com charts e/ou pacotes de chart
+https://cloneherochartscommunity.blogspot.com/?m=1
+https://rhythmverse.co/songfiles/game
+https://www.enchor.us/
+
+# varias br
+https://docs.google.com/spreadsheets/d/1j7leLrzqmc7s-ZE4-Wc_dTjEoSw3cKPP9HudcnjK1Ks/edit?gid=1200650045#gid=1200650045
+
+# animes?
+https://buldy.eu/CHAN.html
+
+# varios rock (acho), mas eh soh expert
+https://drive.google.com/drive/folders/1CWhXBOYVBClY1UdE4bEabswkbY3T7_0N
+
+#melhor p copiar arquivos
+rsync -avhP arquivo.zip yapira@yapira.local:~
