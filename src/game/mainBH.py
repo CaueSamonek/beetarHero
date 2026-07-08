@@ -51,8 +51,13 @@ def select_music():
                 idx = (idx + delta) % len(elements)
                 input_locked = True
 
-        elif not inputBH.buttons[0] and not inputBH.buttons[1] and not inputBH.buttons[2]:
+        elif not inputBH.buttons[0] and not inputBH.buttons[1] and not inputBH.buttons[2] and not inputBH.buttons[4]:
             input_locked = False
+
+        confirmar_troca_teclado = False
+
+        if inputBH.buttons[4] and not input_locked:
+            confirmar_troca_teclado = True
 
         if inputBH.buttons[2] and not input_locked: # botao de 'enter'
             input_locked = True

@@ -2,8 +2,8 @@
 
 BluetoothSerial BT;
 
-const int btns[] = {27, 26, 25, 33};
-bool last[] = {1, 1, 1, 1}; // 1 == HIGH == Botao Solto
+const int btns[] = {27, 26, 25, 33, 32};
+bool last[] = {1, 1, 1, 1, 1}; // 1 == HIGH == Botao Solto
 
 void setup() {
   for (int b : btns)
@@ -13,7 +13,7 @@ void setup() {
 }
 
 void loop(){
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 5; i++) {
     bool cur = digitalRead(btns[i]);
 
     if (cur != last[i]) {
