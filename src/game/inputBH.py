@@ -12,6 +12,7 @@ ESP32_PORT = 1
 
 # fica tentando conectar no esp32 ateh conseguir
 def connectGuitar():
+    global KeySocket
     while True:
         try:
             sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)        
@@ -19,10 +20,19 @@ def connectGuitar():
             print("ESP32 Bluetooth Conectado")
             print("Verfique se a música aparece no display", flush=True)
 
+            KeySocket = sock
             return sock
         except Exception as e:
             print(f"Erro: {e}", flush=True)
 
+# manda pro esp trocar a leitura dos pinos (o que eu suponho que va acontecer)
+def sendKeyChange():
+    global KeySocket
+    if KeySocket:
+        try:
+            KeySocket.sendall("TOGGLE_KEYS\n".encode('utf8'))
+        except:
+            print("Erro ao trocar")
 
 # recebe e atribui 0 (botao foi solto) ou 1 (botao foi apertado) para cada botao
 def bluetoothWorker(sock):
