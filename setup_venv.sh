@@ -1,4 +1,4 @@
-ENV=beetarHero_venv
+ENV=.beetarHero_env
 
 python3 -m venv $ENV
 source $ENV/bin/activate

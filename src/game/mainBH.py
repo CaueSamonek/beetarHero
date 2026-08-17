@@ -55,7 +55,8 @@ def select_music():
                 else:
                     stateBH.countingErrors = True
                 return filesBH.getMusicPath(elements[idx], level)
-
+        
+        # botao de "voltar"
         if inputBH.buttons[3] and level:
             level = None
             elements = configBH.LEVELS
