@@ -21,11 +21,12 @@ class ActiveNote:
 class HeldNote:
     def __init__(self):
         self.note = None
-        self.start_head = 0
+        self.consumed = 0
 
     def clear(self):
         self.note = None
-        self.start_head = 0
+        self.consumed = 0
+
 
 held = [HeldNote() for _ in range(configBH.NUM_LANES)]
 active_notes = [[ActiveNote() for _ in range(configBH.LEDS_PER_LANE)]
@@ -59,7 +60,12 @@ def despawnNote(lane, note):
     if held[lane].note is note:
         held[lane].clear()
 
-
+def hasActive():
+    for l in range(configBH.NUM_LANES):
+        for n in active_notes[l]:
+            if n.active:
+                return True
+    return False
 
 def updateNotes(now_ms):
     for lane in range(configBH.NUM_LANES):
@@ -74,25 +80,25 @@ def updateNotes(now_ms):
             head = int(elapsed_ms * configBH.NOTE_SPEED + 0.5)
             tail = head - note.length_leds + 1
 
-            if head >= configBH.LEDS_PER_LANE and not note.missed:
-                note.missed = True
-                scoreBH.update(scoreBH.SCORE_MISS)
-
             draw_head = head
             draw_tail = tail
 
             if lane_hold.note is note:
-                consumed = max(0, head - lane_hold.start_head)
+                # comeca a desaparecer a partir da hit line
+                if not lane_hold.note.missed:
+                    lane_hold.consumed = head - configBH.HIT_LINE
 
-                #if input.BH.buttons[lane]:
-                #   consumed = 0
+                draw_head = head - lane_hold.consumed
+                draw_tail = draw_head - note.length_leds + 1 + lane_hold.consumed
 
-                draw_head = head - consumed
-                draw_tail = draw_head - note.length_leds + 1 + consumed
-
-                if consumed >= note.length_leds:
+                if lane_hold.consumed >= note.length_leds:
                     despawnNote(lane, note)
                     continue
+            
+            if draw_head >= configBH.LEDS_PER_LANE and not note.missed:
+                note.missed = True
+                scoreBH.update(scoreBH.SCORE_MISS)
+
 
             if tail >= configBH.LEDS_PER_LANE:
                 despawnNote(lane, note)
@@ -125,7 +131,7 @@ def onKeyPress(lane, now_ms):
             note.active = False
         else:
             held[lane].note = note
-            held[lane].start_head = configBH.HIT_LINE
+            held[lane].consumed = 0
 
         return
 
@@ -133,7 +139,9 @@ def onKeyPress(lane, now_ms):
 
 def onKeyRelease(lane):
     if held[lane].note is not None:
+        held[lane].note.missed = True
         scoreBH.update(scoreBH.SCORE_MISS)
+        
 
 pressed = [False]*configBH.NUM_LANES
 def updateInput(now_ms):

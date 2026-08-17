@@ -17,7 +17,6 @@ def format_time(ms):
     total_seconds = ms / 1000
     minutes = total_seconds // 60
     seconds = total_seconds % 60
-    return f"{minutes}:{seconds:02d}"
 
 def updateDisplay():
     ledsBH.show()
@@ -64,7 +63,7 @@ def select_music():
                 if level == configBH.LEVELS[0]:
                     stateBH.countingErrors = False
                 else:
-                    stateBH.countingErrors = False
+                    stateBH.countingErrors = True
                 return filesBH.getMusicPath(elements[idx], level)
 
         if inputBH.buttons[3] and level:
@@ -75,6 +74,11 @@ def select_music():
         lcdBH.write('\n'.join(elements[idx].split(" - ", 1)))
         time.sleep(0.05)
 
+def render(now_ms):
+    ledsBH.blank()
+    notesBH.updateNotes(now_ms)
+    notesBH.updateInput(now_ms)
+    updateDisplay()
 
 def start_music(music_path):
     # carrega duracao da musica e suas notas
@@ -93,34 +97,27 @@ def start_music(music_path):
     audioBH.start(music_path, start_ms, end_ms) # comeca a tocar a musica com os timestamps
     configBH.timeCorrection() # delay para sincronizacao
 
+    pct = ""
     base_ms = time.monotonic_ns() // 1_000_000 # relogio base em ms
     while True:
         played_ms = (time.monotonic_ns() // 1_000_000) - base_ms
         now_ms = played_ms + start_ms
+
         while (event_index < len(events) and events[event_index].time_ms <= now_ms):
             if events[event_index].time_ms <= end_ms:
                 e = events[event_index]
                 notesBH.spawnNote(e.mask, now_ms, e.length_leds)
-                event_index += 1
+            event_index += 1
 
-        ledsBH.blank()
-        notesBH.updateNotes(now_ms)
-        notesBH.updateInput(now_ms)
+        if played_ms%10 == 0:
+            pct = math.floor((played_ms/duration_ms)*100)
+            pct = str(pct)
+        
+        s = scoreBH.lastJudgement.split('\n')
+        s[0] = f"{s[0].split()[0]:<{16-len(pct)-1}}{pct}%"
+        scoreBH.lastJudgement = '\n'.join(s)
 
-
-
-        # soh teste
-        if played_ms%1000 == 0: #atualiza porcentagem a cada segundo
-            # awa to veno
-            s = scoreBH.lastJudgement.split('\n')
-            a = math.floor((played_ms/duration_ms)*100)
-            if a>100:
-                a=100 #evitar umas porcentagens extras por causa do TRAVEL TIME no fim
-            a = str(a)
-            s[0] = f"{s[0].split()[0]:<{16-len(a)-1}}{a}%"
-            scoreBH.lastJudgement = '\n'.join(s)
-
-        updateDisplay()
+        render(now_ms)
 
         if stateBH.runLost: # zerou a vida
             audioBH.stop()
@@ -130,8 +127,21 @@ def start_music(music_path):
             audioBH.stop()
             return -1
 
-        if played_ms >= duration_ms + configBH.NOTE_TRAVEL_TIME_MS:
-            audioBH.stop()
+        #acabou a musica
+        if played_ms >= duration_ms:
+            # espera nao ter mais notas ativas
+            while notesBH.hasActive():
+                played_ms = (time.monotonic_ns() // 1_000_000) - base_ms
+                now_ms = played_ms + start_ms
+                render(now_ms)
+
+            # adiciona um pequeno delay pra n ficar estranho qnd acaba as notas
+            delay_start_ms = now_ms
+            while now_ms - delay_start_ms <= configBH.NOTE_TRAVEL_TIME_MS:
+                played_ms = (time.monotonic_ns() // 1_000_000) - base_ms
+                now_ms = played_ms + start_ms
+                render(now_ms)
+
             return scoreBH.totalScore
 
 

@@ -7,7 +7,7 @@ import configBH
 buttons = [0] * configBH.NUM_LANES
 
 # pra conectar no esp32 da guitarra
-ESP32_MAC = "B0:CB:D8:98:57:9E"
+ESP32_MAC = "30:76:F5:E5:B8:DA"
 ESP32_PORT = 1
 
 # fica tentando conectar no esp32 ateh conseguir
