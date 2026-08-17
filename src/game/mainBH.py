@@ -12,16 +12,6 @@ import audioBH
 import inputBH
 import configBH
 
-# awa soh veno se cabe
-def format_time(ms):
-    total_seconds = ms / 1000
-    minutes = total_seconds // 60
-    seconds = total_seconds % 60
-
-def updateDisplay():
-    ledsBH.show()
-    lcdBH.write(scoreBH.lastJudgement)
-
 def select_music():
     lcdBH.clear()
     ledsBH.light()
@@ -78,7 +68,8 @@ def render(now_ms):
     ledsBH.blank()
     notesBH.updateNotes(now_ms)
     notesBH.updateInput(now_ms)
-    updateDisplay()
+    ledsBH.show()
+    lcdBH.write(scoreBH.lastJudgement)
 
 def start_music(music_path):
     # carrega duracao da musica e suas notas
@@ -109,10 +100,12 @@ def start_music(music_path):
                 notesBH.spawnNote(e.mask, now_ms, e.length_leds)
             event_index += 1
 
+        # atualiza porcentagem decorrida da musica
         if played_ms%10 == 0:
             pct = math.floor((played_ms/duration_ms)*100)
             pct = str(pct)
-        
+ 
+        # manipula a string de score a fim de 'encaixar' a porcentagem no lado superior direito do lcd
         s = scoreBH.lastJudgement.split('\n')
         s[0] = f"{s[0].split()[0]:<{16-len(pct)-1}}{pct}%"
         scoreBH.lastJudgement = '\n'.join(s)
