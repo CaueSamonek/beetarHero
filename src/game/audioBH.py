@@ -15,9 +15,10 @@ def stop():
 
 def to_mmss(ms):
     total_sec = ms // 1000
+    mili = ms % 1000
     minutes = total_sec // 60
     seconds = total_sec % 60
-    return f"{minutes}:{seconds:04.1f}"
+    return f"{minutes}:{seconds}.{mili}"
 
 # comeca a tocar um audio qualquer
 def start(music_path, start_ms=None, end_ms=None):
@@ -47,3 +48,5 @@ def audioWorker(music_path, start, end):
 
     except Exception as e:
         print(f"Audio Error: {e}")
+    
+    stop()

@@ -6,6 +6,7 @@ import configBH
 
 # Configuracoes pra fita de LSD
 BRIGHTNESS = 0.1
+BLINK_TIME = 0.2
 
 COLOR_BLACK  = (0,0,0)
 COLOR_WHITE  = (255,255,255)
@@ -70,16 +71,16 @@ def slideLanes():
             for k in range(configBH.LEDS_PER_LANE):
                 setColor(j, k, lane2color((j+i)%configBH.NUM_LANES))
         pixels.show()
-        time.sleep(0.3)
+        time.sleep(BLINK_TIME)
     clear()
 
 # faz as lanes piscarem em suas respectivas cores
 def blinkLanes():
     for i in range(5):
         light()
-        time.sleep(0.3)
+        time.sleep(BLINK_TIME)
         clear()
-        time.sleep(0.3)
+        time.sleep(BLINK_TIME)
 
 # faz todos os leds piscarem em vermelho
 def blinkRed():
@@ -88,6 +89,6 @@ def blinkRed():
             for k in range(configBH.LEDS_PER_LANE):
                 setColor(j, k, COLOR_RED)
         pixels.show()
-        time.sleep(0.3)
+        time.sleep(BLINK_TIME)
         clear()
-        time.sleep(0.3) 
+        time.sleep(BLINK_TIME) 

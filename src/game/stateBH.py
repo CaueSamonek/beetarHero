@@ -7,10 +7,9 @@ countingErrors = True
 runLost = False
 
 def reset():
-    global runLost, endGame, countingErrors
+    global runLost, endGame
     runLost = False
     endGame = False
-    countingErrors = True
 
 # setup de botao e estado especial
 # se estiver no menu, permite trocar o lado das cores (modo canhoto)
